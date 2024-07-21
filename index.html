@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox Location Tracking</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZGVzaWduZXJzdXJhaiIsImEiOiJjbHl2ZDl6MDcxNGRxMmxzZ2x1YzUyMHA5In0.KI8ydwkA_LLKXKzwhG4mTQ'; // Replace with your Mapbox access token
+
+        // Create a new Mapbox map instance
+        const map = new mapboxgl.Map({
+            container: 'map', // The HTML container id
+            style: 'mapbox://styles/mapbox/streets-v11', // Map style
+            center: [-74.5, 40], // Initial map center [lng, lat]
+            zoom: 9 // Initial zoom level
+        });
+
+        // Function to handle location tracking
+        function handleLocation(position) {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+
+            // Update the map with the user's location
+            map.setCenter([userLon, userLat]);
+            new mapboxgl.Marker()
+                .setLngLat([userLon, userLat])
+                .addTo(map);
+
+            // Optionally, add a popup to the marker
+            new mapboxgl.Popup()
+                .setLngLat([userLon, userLat])
+                .setHTML('<h1>Your Location</h1>')
+                .addTo(map);
+        }
+
+        // Function to handle errors
+        function handleError(error) {
+            console.error('Error getting location:', error);
+            alert('Unable to retrieve your location.');
+        }
+
+        // Check if Geolocation is supported and get user's location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(handleLocation, handleError);
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    </script>
+</body>
+</html>
